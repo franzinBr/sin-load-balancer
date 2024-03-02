@@ -1,0 +1,13 @@
+sin:
+  port: ":3001"
+  method: "round-robin"
+  # method: "least-connections"
+server:
+  healthCheck:
+    endpoint: "/health"
+    statusCode: 200
+    checkInterval: "1s"
+  urls:
+    - "http://localhost:3002"
+    - "http://localhost:3003"
+    - "http://localhost:3004"
