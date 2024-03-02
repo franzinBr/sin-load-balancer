@@ -21,3 +21,15 @@ type BaseBalancer struct {
 	Servers []*server.Server
 }
 
+func FactoryBalancer(config *config.Config, servers []*server.Server) Balancer {
+	var balancer Balancer
+
+	switch config.Sin.Method {
+	case LeastConnections:
+		balancer = NewLeastConnectionBalancer(servers)
+	case RoundRobin:
+		balancer = NewRoundRobinBalancer(servers)
+	}
+
+	return balancer
+}
