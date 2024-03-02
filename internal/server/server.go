@@ -16,3 +16,13 @@ type Server struct {
 	Healthy     bool
 	Mutex       sync.Mutex
 }
+
+func BuildServers(config *config.Config) []*Server {
+	var servers []*Server
+	for _, serverUrl := range config.Server.URLs {
+		u, _ := url.Parse(serverUrl)
+		servers = append(servers, &Server{URL: u, Healthy: true})
+	}
+
+	return servers
+}
