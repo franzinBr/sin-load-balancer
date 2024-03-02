@@ -29,7 +29,8 @@ func main() {
 		server, err := b.GetNextServer()
 
 		if err != nil {
-			http.Error(w, "Ocorreu um erro interno", http.StatusInternalServerError)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
 		}
 
 		server.ServeHTTP(w, r)
