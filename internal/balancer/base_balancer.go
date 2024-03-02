@@ -15,6 +15,7 @@ const (
 
 type Balancer interface {
 	GetNextServer() (*server.Server, error)
+	HealthCheck()
 }
 
 type BaseBalancer struct {
@@ -32,4 +33,22 @@ func FactoryBalancer(config *config.Config, servers []*server.Server) Balancer {
 	}
 
 	return balancer
+}
+
+func (b *BaseBalancer) HealthCheck() {
+
+	config := config.GetConfig()
+
+	interval, err := time.ParseDuration(config.Server.HealthCheck.CheckInterval)
+	if err != nil {
+		log.Fatalf("Invalid health check interval: %s", err.Error())
+	}
+
+	for _, server := range b.Servers {
+		go server.CheckHealthy(
+			config.Server.HealthCheck.Endpoint,
+			config.Server.HealthCheck.StatusCode,
+			interval,
+		)
+	}
 }
