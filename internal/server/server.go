@@ -28,6 +28,21 @@ func (s *Server) CheckHealthy(endpoint string, sucessStatusCode int, interval ti
 
 }
 
+func (s *Server) Proxy() *httputil.ReverseProxy {
+
+	s.Mutex.Lock()
+	s.Connections++
+	s.Mutex.Unlock()
+
+	rProxy := httputil.NewSingleHostReverseProxy(s.URL)
+
+	s.Mutex.Lock()
+	s.Connections--
+	s.Mutex.Unlock()
+
+	return rProxy
+}
+
 func BuildServers(config *config.Config) []*Server {
 	var servers []*Server
 	for _, serverUrl := range config.Server.URLs {
